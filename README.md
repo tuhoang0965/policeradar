@@ -1,31 +1,5 @@
 Radar bắn tốc độ và đọc biển số cho xe cảnh sát. Radar đo tốc độ xe **phía trước và phía sau**, đọc biển số, khóa kết quả, lưu nhật ký, cảnh báo biển số truy nã (BOLO) và tự khóa khi có xe vượt giới hạn tốc độ.
-
-Bản gốc: Samuel#0008 ([GitHub](https://github.com/Samuels-Development/dt-policeradar)). Bản này đã được Việt hóa và chỉnh sửa giao diện cho server DTEAM.
-
 ---
-
-## Cài đặt
-
-1. Đặt thư mục `dt-policeradar` vào `resources`.
-2. Thêm `ensure dt-policeradar` vào `server.cfg`, đặt **sau** `ox_lib`.
-3. Chỉnh `config.lua` nếu cần, rồi restart resource.
-
-**Yêu cầu:** `ox_lib`.
-
-Radar chỉ mở được trên **xe khẩn cấp (class 18)**. Đổi trong `config.lua` > `RestrictToVehicleClass`.
-
-### Thông báo
-
-Mặc định radar dùng **thông báo của QBCore** (`NotificationType = "custom"`, gửi qua event `QBCore:Notify`), nên giao diện giống mọi thông báo khác trên server.
-
-| Thông báo | Loại |
-|---|---|
-| Khóa/mở khóa, mở/đóng nhật ký, danh sách truy nã, bảng phím tắt | `primary` |
-| Lưu kết quả đo, đặt giới hạn tốc độ | `success` |
-| Tự khóa khi có xe vượt giới hạn tốc độ | `error` |
-
-Muốn dùng thông báo riêng của radar (khung xanh giữa màn hình) thì đổi `NotificationType = "native"`. Muốn dùng hệ thống thông báo khác thì sửa hàm `ShowNotification` trong `config.lua`.
-
 ---
 
 ## Phím tắt
@@ -56,24 +30,6 @@ Mọi phím đều phải **giữ Ctrl** rồi bấm phím. Ví dụ: muốn b�
 ### Người chơi tự đổi phím
 
 Vào *Esc > Settings > Key Bindings > FiveM*, tìm các mục bắt đầu bằng **"Radar:"** (ví dụ "Radar: Bật/tắt radar (giữ Ctrl)"). Chỉ đổi được phím chính; phím Ctrl là cố định.
-
-### Admin đổi phím mặc định
-
-Trong `config.lua`:
-
-```lua
-KeyModifier = "CTRL",   -- "CTRL", "SHIFT", "ALT" hoặc false (không cần giữ)
-
-Keybinds = {
-    ToggleRadar = "F6",  -- để nil nếu không muốn gán phím
-    ...
-}
-```
-
-Phím mặc định trong config chỉ áp dụng cho người chơi **chưa từng** gán phím đó. Người đã vào server giữ phím họ đang dùng.
-
-Nếu đổi `KeyModifier` sang `SHIFT` hoặc `ALT`, phải sửa luôn số `36` (mã phím Ctrl) trong 7 script đang nhường phím cho radar: `dt-supportcenter`, `dt-quest`, `dt-groups`, `dt-sellitem`, `dt-fpsbooster`, `dt-dress`, `lb-phone`. Mã mới là Shift = `21`, Alt = `19`.
-
 ---
 
 ## Đọc màn hình radar
@@ -195,41 +151,3 @@ Nhật ký và danh sách truy nã còn có nút di chuyển riêng ở đầu b
 Vị trí và kích thước được **lưu lại** trên máy người chơi, giữ nguyên qua các lần vào game.
 
 ---
-
-## Dành cho dev: event và export
-
-### Event `dt-policeradar:onPlateScanned`
-
-Phát ra mỗi khi radar đọc được biển số mới (phía client).
-
-| Trường | Kiểu | Ý nghĩa |
-|---|---|---|
-| `plate` | string | Biển số |
-| `plateIndex` | number | Kiểu biển số (0–5) |
-| `direction` | string | `"front"` hoặc `"rear"` |
-| `vehicle` | number | Entity của xe |
-
-```lua
-AddEventHandler('dt-policeradar:onPlateScanned', function(data)
-    print(('Đọc được biển %s (%s)'):format(data.plate, data.direction))
-end)
-```
-
-### Export phía client
-
-| Export | Trả về | Tác dụng |
-|---|---|---|
-| `addBoloPlate(plate)` | `boolean` | Thêm biển số vào danh sách truy nã (tự viết hoa). `false` nếu đã có hoặc không hợp lệ. |
-| `removeBoloPlate(plate)` | `boolean` | Xóa biển số khỏi danh sách truy nã. `false` nếu không tìm thấy. |
-| `getBoloPlates()` | `table` | Danh sách biển số truy nã hiện tại. |
-| `isRadarEnabled()` | `boolean` | Radar đang bật hay không. |
-| `toggleRadar()` | — | Bật/tắt radar (vẫn kiểm tra loại xe). |
-
-```lua
--- Đẩy danh sách biển số truy nã từ MDT sang radar
-RegisterNetEvent('mdt:sendBoloToRadar', function(plates)
-    for _, plate in ipairs(plates) do
-        exports['dt-policeradar']:addBoloPlate(plate)
-    end
-end)
-```
