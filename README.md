@@ -1,5 +1,3 @@
-# dt-policeradar
-
 Radar bắn tốc độ và đọc biển số cho xe cảnh sát. Radar đo tốc độ xe **phía trước và phía sau**, đọc biển số, khóa kết quả, lưu nhật ký, cảnh báo biển số truy nã (BOLO) và tự khóa khi có xe vượt giới hạn tốc độ.
 
 Bản gốc: Samuel#0008 ([GitHub](https://github.com/Samuels-Development/dt-policeradar)). Bản này đã được Việt hóa và chỉnh sửa giao diện cho server DTEAM.
